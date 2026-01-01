@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <!-- CSS will be injected here -->
+    <style>
+        __CSS_CONTENT__
+    </style>
+</head>
+<body>
+    <!-- Setup Screen -->
+    <div id='setup-screen'>
+        <h2 style='text-align: center; margin-bottom: 30px;'>Local AI Assistant</h2>
+        <div class='form-group'>
+            <label>Provider Type</label>
+            <select id='config-provider' onchange='updateDefaultPort()'>
+                <option value='ollama' selected>Ollama</option>
+                <option value='lmstudio'>LM Studio (OpenAI Compatible)</option>
+            </select>
+        </div>
+        <div class='form-group'>
+            <label>Server URL</label>
+            <input type='text' id='config-url' value='__INIT_URL__' />
+        </div>
+        <div class='form-group'>
+            <label>Model Name</label>
+            <input type='text' id='config-model' value='__INIT_MODEL__' placeholder='e.g. llama3, mistral' />
+        </div>
+        <div id='error-msg'></div>
+        <button class='btn-primary' id='connect-btn' onclick='tryConnect()'>Connect & Start</button>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id='chat-screen'>
+        <div id='chat-header'>
+            <div id='current-model-info'><span class='status-dot'></span><span id='display-model-name'>Loading...</span></div>
+            <div style="display: flex; gap: 5px;">
+                <!-- 追加: クリアボタン -->
+                <button id='clear-btn' onclick='clearHistory()' title='Clear History' style='background:none; border:none; cursor:pointer; font-size:1.2em;'>🗑️</button>
+                <!-- 既存: 設定ボタン -->
+                <button id='settings-btn' onclick='returnToSetup()' title='Configure Connection'>&#9881;</button>
+            </div>
+        </div>
+        <div id='chat-history'><div class='message ai'>Connected. Ask me anything about your code.</div></div>
+        <div id='input-container'>
+            <div id="suggestion-box" class="suggestion-box"></div>
+            <div id='stream-status'>Ready</div>
+            <div id='input-area'>
+                <textarea id='prompt' placeholder='Ask AI or Request Refactoring...' onkeydown='checkEnter(event)'></textarea>
+                <button id='send-btn' class='chat-btn' onclick='sendMessage()'>Send</button>
+                <button id='stop-btn' class='chat-btn' onclick='cancelGeneration()'>Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS will be injected here -->
+    <script>
+        __JS_CONTENT__
+    </script>
+</body>
+</html>
