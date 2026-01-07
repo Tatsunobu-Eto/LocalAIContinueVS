@@ -735,9 +735,11 @@ namespace LocalAIContinueVS
             string html = ReadResource(assembly, $"{resourceNamespace}.ChatWindow.html");
             string css = ReadResource(assembly, $"{resourceNamespace}.ChatWindow.css");
             string js = ReadResource(assembly, $"{resourceNamespace}.ChatWindow.js");
+            string markedJs = ReadResource(assembly, $"{resourceNamespace}.marked.min.js");
 
             html = html.Replace("__CSS_CONTENT__", css);
             html = html.Replace("__JS_CONTENT__", js);
+            html = html.Replace("__MARKED_JS__", markedJs);
 
             html = html.Replace("__INIT_URL__", initUrl);
             html = html.Replace("__INIT_MODEL__", initModel);

@@ -346,6 +346,46 @@ textarea {
         background-color: #2d2d2d;
         color: #888;
     }
+
+/* Table styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    background-color: #252526;
+    color: #cccccc;
+}
+
+th, td {
+    border: 1px solid #3e3e42;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+td ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+td li {
+    margin-bottom: 2px;
+}
+
+th {
+    background-color: #2d2d30;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #2a2a2d;
+}
+
+tr:hover {
+    background-color: #333337;
+}
+
 /* ★追加: 候補リストのスタイル */
 .suggestion-box {
     display: none; /* デフォルト非表示 */
