@@ -177,36 +177,49 @@ function addMessage(content, type, isHtml = false) {
     history.scrollTop = history.scrollHeight;
 }
 
+// Configure marked
+const renderer = new marked.Renderer();
+
+// Custom code block renderer to add action buttons
+// marked v4+ uses an object as the first argument, or (code, lang, escaped)
+// To be safe and compatible, we handle both or use the provided args
+renderer.code = function(codeOrObj, language) {
+    let code = '';
+    if (typeof codeOrObj === 'object') {
+        code = codeOrObj.text;
+    } else {
+        code = codeOrObj;
+    }
+
+    // Escaping code for safe display in HTML
+    const escapedCode = escapeHtml(code);
+    return `<pre><div class='code-actions'>
+                <button class='action-btn' onclick='postAction(CMD_INSERT, this)'>Insert</button>
+                <button class='action-btn' onclick='postAction(CMD_REPLACE, this)'>Show Diff</button>
+                <button class='action-btn' onclick='postAction(CMD_APPLY, this)'>Apply</button>
+                <button class='action-btn' onclick='createFile(this)'>New File</button>
+            </div><code>${escapedCode}</code></pre>`;
+};
+
+marked.setOptions({
+    renderer: renderer,
+    gfm: true,
+    breaks: true,
+    headerIds: false,
+    mangle: false
+});
+
 function formatResponse(text) {
-    let safeText = escapeHtml(text);
-    const codeBlocks = [];
-
-    safeText = safeText.replace(/```(?:[a-zA-Z0-9#+\-\.]*)?(?:\r?\n)?([\s\S]*?)```/g, function (match, code) {
-        code = code.replace(/^\n+|\n+$/g, '');
-        codeBlocks.push(code);
-        return '___CODE_BLOCK_' + (codeBlocks.length - 1) + '___';
-    });
-
-    safeText = safeText.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    safeText = safeText.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-    safeText = safeText.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-    safeText = safeText.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-    safeText = safeText.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    safeText = safeText.replace(/^\s*[\-\*] (.*$)/gm, '&#8226; $1<br>');
-    safeText = safeText.replace(/\n/g, '<br>');
-
-    // ★変更: Replaceボタンのラベルを「Show Diff」に変更して意図を明確化
-    safeText = safeText.replace(/___CODE_BLOCK_(\d+)___/g, function (match, index) {
-        const code = codeBlocks[index];
-        return `<pre><div class='code-actions'>
-                    <button class='action-btn' onclick='postAction(CMD_INSERT, this)'>Insert</button>
-                    <button class='action-btn' onclick='postAction(CMD_REPLACE, this)'>Show Diff</button>
-                    <button class='action-btn' onclick='postAction(CMD_APPLY, this)'>Apply</button>
-                    <button class='action-btn' onclick='createFile(this)'>New File</button>
-                </div><code>${code}</code></pre>`;
-    });
-    return safeText;
+    if (!text) return "";
+    
+    // marked.parse handles escaping for non-code parts, 
+    // but we need to ensure the text passed is clean
+    try {
+        return marked.parse(text);
+    } catch (e) {
+        console.error("Marked parse error:", e);
+        return escapeHtml(text).replace(/\n/g, '<br>');
+    }
 }
 
 function escapeHtml(text) {
